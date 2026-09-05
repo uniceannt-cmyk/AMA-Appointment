@@ -1,0 +1,84 @@
+:root {
+    --bg: #f3f6fb;
+    --surface: #ffffff;
+    --surface-alt: #f2f2f2;
+    --text: #1f2937;
+    --muted: #475569;
+    --header: #004080;
+    --header-text: #ffffff;
+    --border: #dfe7f0;
+    --search-border: #004080;
+    --search-hover: #0073e6;
+}
+
+body{
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+header{
+    background: var(--header);
+    color: var(--header-text);
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header nav a{
+    color: var(--header-text);
+    margin-left: 15px;
+    text-decoration: none;
+}
+
+.appointments-history{
+    padding: 30px;
+}
+
+.appointments-history h2{
+    margin-bottom: 15px;
+    color: var(--text);
+}
+
+.searchbar {
+    margin-bottom: 10px;
+    padding: 10px;
+    width: 30%; 
+    font-size: 16px;
+    border: 2px solid var(--search-border);
+    border-radius: 6px;
+    outline: none;
+    background: var(--surface);
+    color: var(--text);
+    transition: all 0.3s ease;
+}
+
+.searchbar:hover {
+    border-color: var(--search-hover);
+    background-color: var(--surface-alt);
+}
+
+table{
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+}
+
+table th, table td{
+    border: 1px solid var(--border);
+    padding: 10px;
+    text-align: center;
+}
+
+table th{
+    background: var(--header);
+    color: var(--header-text);
+}
+
+table tr:nth-child(even){
+    background: var(--surface-alt);
+}
