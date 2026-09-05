@@ -6,6 +6,7 @@
     <title>Registrar Office</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="registrar.css">
+    <script src="popup.js" defer></script>
   </head>
 
   <body>
@@ -16,24 +17,24 @@
     <header>
       <h1>Registrar Office</h1>
       <nav>
-        <a href="homepage.php">Home</a>
-        <a href="">Logout</a>
+        <a href="homepage.html">Home</a>
+        <a href="index.html">Logout</a>
       </nav>
     </header>
 
     <section class="services">
       <h2>Available Services</h2>
       <div class="service-list">
-        <div class="service-card">Enrollnment Verification</div>
+        <div class="service-card">Enrollment Verification</div>
         <div class="service-card">Transcript Request</div>
         <div class="service-card">Student Records Update</div>
-        <div class="service-card">Certificate of Enrollnment</div>
+        <div class="service-card">Certificate of Enrollment</div>
       </div>
     </section>
 
     <section class="booking">
       <h2>Book an Appointment</h2>
-      <form method="post" action="book_appointment.php">
+      <form method="post" action="/api/appointments">
         
         <label for="service">Select Service:</label>
         <select name="service" id="service" required>
@@ -42,31 +43,32 @@
           <option value="Student Records Update">Student Records Update</option>
           <option value="Certificate of Enrollment">Certificate of Enrollment</option>
         </select>
+
         <label for="date">Choose Date:</label>
         <input type="date" name="date" id="date" class="date-time" required>
 
         <label for="time">Choose Time:</label>
         <select name="time" id="time" class="date-time" required>
           <option value="">Select time</option>
-          <option value="08:00">8:00 AM</option>
-          <option value="08:30">8:30 AM</option>
-          <option value="09:00">9:00 AM</option>
-          <option value="09:30">9:30 AM</option>
-          <option value="10:00">10:00 AM</option>
-          <option value="10:30">10:30 AM</option>
-          <option value="11:00">11:00 AM</option>
-          <option value="11:30">11:30 AM</option>
-          <option value="12:00">12:00 PM</option>
-          <option value="12:30">12:30 PM</option>
-          <option value="13:00">1:00 PM</option>
-          <option value="13:30">1:30 PM</option>
-          <option value="14:00">2:00 PM</option>
-          <option value="14:30">2:30 PM</option>
-          <option value="15:00">3:00 PM</option>
-          <option value="15:30">3:30 PM</option>
-          <option value="16:00">4:00 PM</option>
-          <option value="16:30">4:30 PM</option>
-          <option value="17:00">5:00 PM</option>
+          <option value="8:00 AM">8:00 AM</option>
+          <option value="8:30 AM">8:30 AM</option>
+          <option value="9:00 AM">9:00 AM</option>
+          <option value="9:30 AM">9:30 AM</option>
+          <option value="10:00 AM">10:00 AM</option>
+          <option value="10:30 AM">10:30 AM</option>
+          <option value="11:00 AM">11:00 AM</option>
+          <option value="11:30 AM">11:30 AM</option>
+          <option value="12:00 PM">12:00 PM</option>
+          <option value="12:30 PM">12:30 PM</option>
+          <option value="1:00 PM">1:00 PM</option>
+          <option value="1:30 PM">1:30 PM</option>
+          <option value="2:00 PM">2:00 PM</option>
+          <option value="2:30 PM">2:30 PM</option>
+          <option value="3:00 PM">3:00 PM</option>
+          <option value="3:30 PM">3:30 PM</option>
+          <option value="4:00 PM">4:00 PM</option>
+          <option value="4:30 PM">4:30 PM</option>
+          <option value="5:00 PM">5:00 PM</option>
         </select>
 
         <input type="hidden" name="office" value="registrar">
@@ -75,6 +77,29 @@
     </section>
 
     <script>
+      // Automatically set the minimum selectable date to today (prevents selecting past dates)
+      const dateInput = document.getElementById('date');
+      if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+      }
+
+      const bookingForm = document.querySelector('.booking form');
+      bookingForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const response = await fetch('/api/appointments', { 
+          method: 'POST', 
+          headers: { 'Content-Type': 'application/json' }, 
+          body: JSON.stringify(Object.fromEntries(new FormData(bookingForm))) 
+        });
+        const result = await response.json();
+        if (!response.ok) { 
+          AppPopup.show(result.error || 'Unable to book appointment.', 'error'); 
+          return; 
+        }
+        AppPopup.show(result.message, 'success', 'homepage.html');
+      });
+
       const themeToggle = document.getElementById('themeToggle');
       if (themeToggle) {
         const savedTheme = localStorage.getItem('theme') || 'light';
