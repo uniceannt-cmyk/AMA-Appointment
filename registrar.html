@@ -34,10 +34,11 @@
 
     <section class="booking">
       <h2>Book an Appointment</h2>
-      <form method="post" action="/api/appointments">
+      <form id="appointmentForm">
         
         <label for="service">Select Service:</label>
         <select name="service" id="service" required>
+          <option value="" disabled selected>Select a service</option>
           <option value="Enrollment Verification">Enrollment Verification</option>
           <option value="Transcript Request">Transcript Request</option>
           <option value="Student Records Update">Student Records Update</option>
@@ -49,7 +50,7 @@
 
         <label for="time">Choose Time:</label>
         <select name="time" id="time" class="date-time" required>
-          <option value="">Select time</option>
+          <option value="" disabled selected>Select time</option>
           <option value="8:00 AM">8:00 AM</option>
           <option value="8:30 AM">8:30 AM</option>
           <option value="9:00 AM">9:00 AM</option>
@@ -77,34 +78,45 @@
     </section>
 
     <script>
-      // Automatically set the minimum selectable date to today (prevents selecting past dates)
+      // Restrict minimum selectable date to today
       const dateInput = document.getElementById('date');
       if (dateInput) {
         const today = new Date().toISOString().split('T')[0];
         dateInput.setAttribute('min', today);
       }
 
-      const bookingForm = document.querySelector('.booking form');
+      // Handle Form Submission
+      const bookingForm = document.getElementById('appointmentForm');
       bookingForm.addEventListener('submit', async (event) => {
         event.preventDefault();
-        const response = await fetch('/api/appointments', { 
-          method: 'POST', 
-          headers: { 'Content-Type': 'application/json' }, 
-          body: JSON.stringify(Object.fromEntries(new FormData(bookingForm))) 
-        });
-        const result = await response.json();
-        if (!response.ok) { 
-          AppPopup.show(result.error || 'Unable to book appointment.', 'error'); 
-          return; 
+
+        try {
+          const response = await fetch('/api/appointments', { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify(Object.fromEntries(new FormData(bookingForm))) 
+          });
+
+          const result = await response.json();
+
+          if (!response.ok) { 
+            AppPopup.show(result.error || 'Unable to book appointment.', 'error'); 
+            return; 
+          }
+
+          AppPopup.show(result.message || 'Appointment booked successfully!', 'success', 'homepage.html');
+        } catch (error) {
+          AppPopup.show('Network error. Please try again later.', 'error');
         }
-        AppPopup.show(result.message, 'success', 'homepage.html');
       });
 
+      // Theme Toggle Logic
       const themeToggle = document.getElementById('themeToggle');
       if (themeToggle) {
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.body.setAttribute('data-theme', savedTheme);
         const icon = themeToggle.querySelector('i');
+        
         if (icon) {
           icon.classList.toggle('fa-sun', savedTheme === 'dark');
           icon.classList.toggle('fa-moon', savedTheme !== 'dark');
